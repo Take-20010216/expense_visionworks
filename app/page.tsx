@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 async function getStats(year: number, month: number) {
   const start = new Date(year, month - 1, 1);
   const end = new Date(year, month, 1);

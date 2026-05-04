@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 const CATEGORIES = [
   "旅費交通費", "消耗品費", "通信費", "会議費", "接待交際費",
-  "外注費", "福利厚生費", "広告宣伝費", "事務用品費", "地代家賃", "その他経費",
+  "外注費", "福利厚生費", "広告宣伝費", "事務用品費", "地代家賃", "車両費", "雑費", "その他経費",
 ];
 
 interface Member { id: number; name: string }

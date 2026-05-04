@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Member {
+  id        Int       @id @default(autoincrement())
+  name      String
+  expenses  Expense[]
+  payrolls  Payroll[]
+  createdAt DateTime  @default(now())
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  amount      Int
+  description String
+  category    String
+  receiptType String   @default("紙")
+  checked     Boolean  @default(false)
+  memo        String?
+  freeeId     String?
+  memberId    Int
+  member      Member   @relation(fields: [memberId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Sale {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  amount      Int
+  client      String?
+  description String
+  category    String   @default("売上高")
+  freeeId     String?
+  createdAt   DateTime @default(now())
+}
+
+model Payroll {
+  id        Int      @id @default(autoincrement())
+  month     String
+  amount    Int
+  type      String   @default("給与")
+  memberId  Int
+  member    Member   @relation(fields: [memberId], references: [id])
+  freeeId   String?
+  createdAt DateTime @default(now())
+}

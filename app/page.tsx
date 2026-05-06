@@ -70,6 +70,7 @@ export default async function Dashboard({
   const now = new Date();
   const monthStr = sp.month ?? `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   const [year, month] = monthStr.split("-").map(Number);
+  const fiscalYear = month >= 4 ? year : year - 1;
 
   const [stats, memberSummary] = await Promise.all([
     getStats(year, month),
@@ -78,15 +79,21 @@ export default async function Dashboard({
 
   const fiscalMonths = Array.from({ length: 12 }, (_, i) => {
     const m = ((i + 3) % 12) + 1;
-    const y = m >= 4 ? year : year + 1;
+    const y = m >= 4 ? fiscalYear : fiscalYear + 1;
     return { label: MONTHS[i], value: `${y}-${String(m).padStart(2, "0")}` };
   });
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">ダッシュボード</h1>
-        <div className="flex gap-2 flex-wrap">
+      </div>
+      <div className="flex items-center gap-3 mb-2">
+        <Link href={`/?month=${fiscalYear - 1}-04`} className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50">←</Link>
+        <span className="text-sm font-medium text-gray-600">{fiscalYear}年度</span>
+        <Link href={`/?month=${fiscalYear + 1}-04`} className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50">→</Link>
+      </div>
+      <div className="flex gap-2 flex-wrap mb-6">
           {fiscalMonths.map((m) => (
             <Link
               key={m.value}
@@ -100,7 +107,6 @@ export default async function Dashboard({
               {m.label}
             </Link>
           ))}
-        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

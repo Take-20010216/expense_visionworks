@@ -73,11 +73,12 @@ function ExpensesContent() {
   };
 
   const total = expenses.reduce((s, e) => s + e.amount, 0);
-  const [year] = monthStr.split("-").map(Number);
+  const [year, month] = monthStr.split("-").map(Number);
+  const fiscalYear = month >= 4 ? year : year - 1;
 
   const fiscalMonths = MONTHS.map((m) => {
-    const fiscalYear = parseInt(m.m) >= 4 ? year : year + 1;
-    return { ...m, value: `${fiscalYear}-${m.m}` };
+    const fy = parseInt(m.m) >= 4 ? fiscalYear : fiscalYear + 1;
+    return { ...m, value: `${fy}-${m.m}` };
   });
 
   const setMonth = (val: string) => {
@@ -101,6 +102,17 @@ function ExpensesContent() {
         </Link>
       </div>
 
+      <div className="flex items-center gap-3 mb-2">
+        <button
+          onClick={() => setMonth(`${fiscalYear - 1}-04`)}
+          className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+        >←</button>
+        <span className="text-sm font-medium text-gray-600">{fiscalYear}年度</span>
+        <button
+          onClick={() => setMonth(`${fiscalYear + 1}-04`)}
+          className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+        >→</button>
+      </div>
       <div className="flex gap-2 flex-wrap mb-3">
         {fiscalMonths.map((m) => (
           <button

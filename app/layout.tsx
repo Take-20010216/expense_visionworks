@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             ))}
           </div>
         </nav>
-        <main className="max-w-7xl mx-auto px-4 py-6">{children}</main>
+        <main className="max-w-7xl mx-auto px-3 py-4 md:px-4 md:py-6">{children}</main>
       </body>
     </html>
   );

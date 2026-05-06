@@ -141,68 +141,97 @@ function ExpensesContent() {
         <span className="text-sm text-gray-500">合計: <strong>¥{total.toLocaleString()}</strong>（{expenses.length}件）</span>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        {loading ? (
-          <div className="p-6 text-gray-400 text-sm text-center">読み込み中...</div>
-        ) : expenses.length === 0 ? (
-          <div className="p-6 text-gray-400 text-sm text-center">データがありません</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium text-gray-500">確認</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-500">日付</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-500">担当者</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-500">内容</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-500">勘定科目</th>
-                  <th className="px-4 py-3 text-right font-medium text-gray-500">金額</th>
-                  <th className="px-4 py-3 text-center font-medium text-gray-500">領収書</th>
-                  <th className="px-4 py-3 text-left font-medium text-gray-500">メモ</th>
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {expenses.map((e) => (
-                  <tr key={e.id} className={e.checked ? "bg-green-50" : ""}>
-                    <td className="px-4 py-3">
-                      <input
-                        type="checkbox"
-                        checked={e.checked}
-                        onChange={() => toggleCheck(e)}
-                        className="rounded"
-                      />
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">{formatDate(e.date)}</td>
-                    <td className="px-4 py-3 whitespace-nowrap">{e.member.name}</td>
-                    <td className="px-4 py-3">{e.description}</td>
-                    <td className="px-4 py-3">
-                      <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">{e.category}</span>
-                    </td>
-                    <td className="px-4 py-3 text-right font-medium">¥{e.amount.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`px-2 py-0.5 rounded text-xs ${e.receiptType === "紙" ? "bg-pink-100 text-pink-700" : "bg-blue-100 text-blue-700"}`}>
-                        {e.receiptType}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{e.memo}</td>
-                    <td className="px-4 py-3">
-                      <button onClick={() => del(e.id)} className="text-red-400 hover:text-red-600 text-xs">削除</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot className="bg-gray-50 border-t-2 border-gray-200">
-                <tr>
-                  <td colSpan={5} className="px-4 py-3 font-semibold">合計</td>
-                  <td className="px-4 py-3 text-right font-bold text-lg">¥{total.toLocaleString()}</td>
-                  <td colSpan={3}></td>
-                </tr>
-              </tfoot>
-            </table>
+      {loading ? (
+        <div className="p-6 text-gray-400 text-sm text-center">読み込み中...</div>
+      ) : expenses.length === 0 ? (
+        <div className="p-6 text-gray-400 text-sm text-center">データがありません</div>
+      ) : (
+        <>
+          {/* モバイル: カード表示 */}
+          <div className="md:hidden space-y-2">
+            {expenses.map((e) => (
+              <div key={e.id} className={`bg-white rounded-xl border p-3 ${e.checked ? "border-green-200 bg-green-50" : "border-gray-100"}`}>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <input type="checkbox" checked={e.checked} onChange={() => toggleCheck(e)} className="rounded shrink-0 mt-0.5" />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs text-gray-400">{formatDate(e.date)}</span>
+                        <span className="text-xs text-gray-500">{e.member.name}</span>
+                        <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">{e.category}</span>
+                        <span className={`px-1.5 py-0.5 rounded text-xs ${e.receiptType === "紙" ? "bg-pink-100 text-pink-700" : "bg-blue-100 text-blue-700"}`}>{e.receiptType}</span>
+                      </div>
+                      <div className="font-medium text-sm mt-0.5">{e.description}</div>
+                      {e.memo && <div className="text-xs text-gray-400 mt-0.5">{e.memo}</div>}
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="font-bold text-sm">¥{e.amount.toLocaleString()}</div>
+                    <button onClick={() => del(e.id)} className="text-red-400 hover:text-red-600 text-xs mt-1">削除</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <div className="bg-gray-50 rounded-xl border border-gray-200 px-4 py-3 flex justify-between font-semibold text-sm">
+              <span>合計</span>
+              <span className="font-bold text-base">¥{total.toLocaleString()}</span>
+            </div>
           </div>
-        )}
-      </div>
+
+          {/* PC: テーブル表示 */}
+          <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">確認</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">日付</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">担当者</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">内容</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">勘定科目</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">金額</th>
+                    <th className="px-4 py-3 text-center font-medium text-gray-500">領収書</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">メモ</th>
+                    <th className="px-4 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {expenses.map((e) => (
+                    <tr key={e.id} className={e.checked ? "bg-green-50" : ""}>
+                      <td className="px-4 py-3">
+                        <input type="checkbox" checked={e.checked} onChange={() => toggleCheck(e)} className="rounded" />
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">{formatDate(e.date)}</td>
+                      <td className="px-4 py-3 whitespace-nowrap">{e.member.name}</td>
+                      <td className="px-4 py-3">{e.description}</td>
+                      <td className="px-4 py-3">
+                        <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">{e.category}</span>
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium">¥{e.amount.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`px-2 py-0.5 rounded text-xs ${e.receiptType === "紙" ? "bg-pink-100 text-pink-700" : "bg-blue-100 text-blue-700"}`}>
+                          {e.receiptType}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-400 text-xs">{e.memo}</td>
+                      <td className="px-4 py-3">
+                        <button onClick={() => del(e.id)} className="text-red-400 hover:text-red-600 text-xs">削除</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot className="bg-gray-50 border-t-2 border-gray-200">
+                  <tr>
+                    <td colSpan={5} className="px-4 py-3 font-semibold">合計</td>
+                    <td className="px-4 py-3 text-right font-bold text-lg">¥{total.toLocaleString()}</td>
+                    <td colSpan={3}></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
